@@ -6,25 +6,50 @@ var Highchart = (function () {
     
     loadChart: function () {
       var hash = location.hash.substr(1),
-        num    = parseInt(hash, 10);
-        data   = this.chart_data[num],
-        its_a_number_in_the_hash = !isNaN(num);
-        
-      if (its_a_number_in_the_hash) {
-        this.slider.label( data.name );
-        this.slider.value( num );
-        this.update( data );
+        num    = parseInt(hash, 10),
+        the_hash_is_not_a_number = isNaN(num), 
+        data;
+
+      if (the_hash_is_not_a_number) {
+        num = 0;
       }
+      
+      data = this.chart_data[num];
+      
+      this.slider.label( data.name );
+      this.slider.value( num );
+      this.update( data );
     },
     create: function() {
       this.preloadImages();
     
       this.chart = new Highcharts.Chart({
-        chart:   { type: 'spline', renderTo: 'container', turboThreshold: 1, plotBackgroundImage: 'images/maps/map_1.gif' },
-        credits: { enabled: false },
-        title:   { text: 'iPhone Ringers Turned On / Off by Timezone' },
+        'chart':   { 
+          type: 'spline', 
+          renderTo: 'container', 
+          turboThreshold: 1, 
+          plotBackgroundImage: 'images/maps/map_1.gif',
+          borderRadius: 4
+        },
         
-        tooltip: {
+        'title':   { 
+          text: 'iPhone Ringers Turned On / Off',
+          style: {
+            fontSize: '20px',
+            color: '#5e5e5e'
+          } 
+        },
+        
+        'subtitle': {
+          style: {
+            text: 'by Timezone',
+            color: '#5e5e5e'
+          }
+        },
+        
+        'credits': { enabled: false },
+        
+        'tooltip': {
           valueSuffix: ",000",
           pointFormat: '{series.name}: <b>{point.y}</b><br/>',
           shared:      true,
@@ -32,31 +57,31 @@ var Highchart = (function () {
           crosshairs:  true
         },
         
-        legend: {
+        'legend': {
           align: 'left',
           verticalAlign: 'top',
-          y: 45,
-          x: 80,
+          y: 10,
+          x: 65,
           floating: true,
           borderWidth: 1,
           backgroundColor: '#fff'
         },
         
-        xAxis: {
+        'xAxis': {
           categories: [
             '12am','1am','2am','3am','4am','5am','6am','7am','8am','9am','10am','11am',
             '12pm','1pm','2pm','3pm','4pm','5pm','6pm','7pm','8pm','9pm','10pm','11pm'
           ]
         },
         
-        yAxis: {
-          title: { text: '# of iPhones (in thousands)' },
+        'yAxis': {
+          title: { text: '# of iPhones (in thousands)', style: { color: '#5e5e5e' } },
           minRange: 0,
           min: 0,
           max: 1500
         },
         
-        series: [
+        'series': [
           {
             id  : "ringer_on", 
             name: 'Ringer Turned On',
@@ -85,7 +110,9 @@ var Highchart = (function () {
     },
     
     update: function (data) {
-      this.chart.setTitle( { text: 'iPhone Ringers Turned On / Off by Timezone (' + data.name.toUpperCase() + ')' } );
+      this.chart.setTitle( 
+      { text: 'iPhone Ringers Turned On / Off' },
+      { text:  'by Timezone (' + data.name.toUpperCase() + ')' });
       $('.highcharts-container image').attr('href', "images/maps/map_" + data.map_id + ".gif");
       this.chart.get( 'ringer_on'  ).setData( data.ringer_on  );
       this.chart.get( 'ringer_off' ).setData( data.ringer_off ); 
